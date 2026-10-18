@@ -4,6 +4,12 @@
   publish = "."
   command = ""
 
+# A varredura de segredos da Netlify barra o build se achar o valor de uma variável secreta no
+# código. O nome de usuário do gerador não é segredo (a senha é que protege) e coincide com textos
+# públicos do site, então só ele fica fora da varredura; as outras variáveis continuam verificadas.
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "GERADOR_USUARIO"
+
 # Arquivos do repositório que não fazem parte do site não devem ficar acessíveis pela URL.
 [[redirects]]
   from = "/CLAUDE.md"
