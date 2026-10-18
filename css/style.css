@@ -623,16 +623,6 @@ a { color: inherit; }
 
 .wizard__card-rotulo { font-weight: 600; color: var(--noite); }
 
-.wizard__card-ajuda { font-size: 0.8rem; color: var(--carvao); opacity: 0.75; }
-
-.wizard__nota {
-  background: var(--areia);
-  border-radius: var(--radius);
-  padding: 16px;
-  margin-bottom: 16px;
-  color: var(--noite);
-}
-
 .wizard__campo-linha {
   display: flex;
   gap: 10px;

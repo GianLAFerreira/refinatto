@@ -2,9 +2,8 @@
 //
 // Mesma filosofia de js/catalogo-portas.js: SÓ DADOS aqui, nenhuma lógica de wizard.
 //
-// Rodapé é bem mais simples que porta: 2 estilos x 3 larguras x 2 cores, sem regra cruzada entre
-// eles (nenhuma escolha aqui limita as opções de outra etapa, diferente do que acontece com as
-// linhas de porta). Não há código de modelo tipo "PSS01" pra rodapé no catálogo, por isso
+// 2 estilos x 3 larguras x 2 cores, sem regra cruzada entre eles (nenhuma escolha aqui limita as
+// opções de outra etapa). Não há código de fornecedor pra rodapé no catálogo, por isso
 // "incluirCodigoFornecedor" nem se aplica aqui.
 //
 // PENDENTE DE CONFIRMAÇÃO: assumimos que as 2 cores (Branco e Amadeirado) valem pros 2 estilos,

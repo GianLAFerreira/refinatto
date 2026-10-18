@@ -1,7 +1,0 @@
-<svg xmlns="http://www.w3.org/2000/svg" width="90" height="180" viewBox="0 0 90 180">
-  <!-- Modelo "Almofadada": 2 painéis em relevo, um grande em cima e um menor embaixo -->
-  <rect x="4" y="4" width="82" height="172" rx="3" fill="#f2ece0" stroke="#b68a3b" stroke-width="4"/>
-  <rect x="15" y="14" width="60" height="98" rx="2" fill="none" stroke="#c9a562" stroke-width="3"/>
-  <rect x="15" y="120" width="60" height="46" rx="2" fill="none" stroke="#c9a562" stroke-width="3"/>
-  <circle cx="72" cy="92" r="3.5" fill="#b68a3b"/>
-</svg>

@@ -30,9 +30,9 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
   portas. Qualquer `const`/`function` nova no nível do arquivo precisa de nome único entre arquivos.
 - Ordem dos `<script>` no index.html importa: catálogo antes do wizard, `main.js` por último.
 - Wizards: cada etapa é um objeto em `ETAPAS` (render genérico por `tipo`: lista, cards, texto,
-  numero, nota). `mostrarSe(respostas)` torna a etapa condicional. No de portas, trocar o tipo de
-  abertura chama `revalidar()` para descartar medidas que não existem na linha nova.
-- Nome do fornecedor e códigos de modelo (PSS01...) NUNCA aparecem em texto visível do site; só vão
+  numero). `mostrarSe(respostas)` torna a etapa condicional. O de portas pergunta só cor, largura da
+  folha (+ sob medida) e quantidade; porta é sempre fornecimento + instalação.
+- Nome do fornecedor e códigos de cor (Branco UV...) NUNCA aparecem em texto visível do site; só vão
   na mensagem do WhatsApp quando `incluirCodigoFornecedor` é true.
 - Limite de ~3500 caracteres no link do WhatsApp (`LIMITE_CARACTERES_SEGURO`); acima disso pede
   confirmação. Limites de 5 portas e 5 ambientes de rodapé por orçamento.

@@ -13,15 +13,6 @@ const LIMITE_PORTAS = 5;
 
 const OPCAO_NAO_SEI = { id: "nao_sei", rotulo: "Não sei / quero orientação" };
 
-// Usadas só quando a pessoa ainda não escolheu (ou pulou) o tipo de abertura, para a etapa de
-// largura ainda mostrar algo sensato em vez de ficar vazia.
-const LARGURAS_FOLHA_PADRAO = [60, 70, 80, 90];
-const LARGURAS_MARCO_PADRAO = [7, 10, 13, 16];
-
-function linhaAtual(respostas) {
-  return CATALOGO.linhas.find((l) => l.id === respostas.tipoAbertura) || null;
-}
-
 function resolver(valor, respostas) {
   return typeof valor === "function" ? valor(respostas) : valor;
 }
@@ -32,32 +23,10 @@ function escapeHtml(valor) {
   ));
 }
 
-// Cada etapa descreve UMA pergunta. O render é genérico (montarHtmlEtapa) - nada de escrever
-// um bloco de HTML por etapa. "opcoes" e "mostrarSe" recebem as respostas já dadas, para que a
-// linha escolhida (De giro, Pivotante...) filtre o que faz sentido perguntar depois.
+// Cada etapa descreve UMA pergunta. O render é genérico (montarConteudoEtapa) - nada de escrever
+// um bloco de HTML por etapa. "opcoes" e "mostrarSe" recebem as respostas já dadas, para que uma
+// escolha (ex: largura "Sob medida") possa liberar uma pergunta seguinte.
 const ETAPAS = [
-  {
-    id: "ambiente",
-    pergunta: "Onde fica a porta?",
-    tipo: "lista",
-    opcoes: () => CATALOGO.ambientes.map((a) => ({ id: a, rotulo: a })).concat([OPCAO_NAO_SEI]),
-  },
-  {
-    id: "tipoAbertura",
-    pergunta: "Tipo de abertura",
-    tipo: "cards",
-    opcoes: () => CATALOGO.linhas
-      .map((l) => ({ id: l.id, rotulo: l.rotulo, ajuda: l.ajuda }))
-      .concat([OPCAO_NAO_SEI]),
-  },
-  {
-    id: "modeloFolha",
-    pergunta: "Modelo da folha",
-    tipo: "cards",
-    opcoes: () => CATALOGO.modelosFolha
-      .map((m) => ({ id: m.id, rotulo: m.rotulo, svg: m.svg, codigo: m.codigo }))
-      .concat([OPCAO_NAO_SEI]),
-  },
   {
     id: "cor",
     pergunta: "Cor",
@@ -70,20 +39,9 @@ const ETAPAS = [
     id: "larguraFolha",
     pergunta: "Largura da folha",
     tipo: "lista",
-    ajuda: (r) => {
-      const linha = linhaAtual(r);
-      if (!linha) return "";
-      return Array.isArray(linha.alturas)
-        ? `Altura padrão desta linha: ${linha.alturas[0]} cm.`
-        : `Altura sob medida entre ${linha.alturas.min} e ${linha.alturas.max} cm. Perguntamos a seguir.`;
-    },
-    opcoes: (r) => {
-      const linha = linhaAtual(r);
-      const larguras = linha ? linha.largurasFolha : LARGURAS_FOLHA_PADRAO;
-      return larguras
-        .map((cm) => ({ id: String(cm), rotulo: `${cm} cm` }))
-        .concat([{ id: "sob_medida", rotulo: "Sob medida" }, OPCAO_NAO_SEI]);
-    },
+    opcoes: () => CATALOGO.largurasFolha
+      .map((cm) => ({ id: String(cm), rotulo: `${cm} cm` }))
+      .concat([{ id: "sob_medida", rotulo: "Sob medida" }, OPCAO_NAO_SEI]),
   },
   {
     id: "larguraSobMedida",
@@ -91,81 +49,6 @@ const ETAPAS = [
     tipo: "texto",
     ajuda: "Ex: 85 cm",
     mostrarSe: (r) => r.larguraFolha === "sob_medida",
-  },
-  {
-    id: "altura",
-    pergunta: "Altura da porta",
-    tipo: "numero",
-    ajuda: (r) => {
-      const linha = linhaAtual(r);
-      return linha ? `Entre ${linha.alturas.min} e ${linha.alturas.max} cm.` : "";
-    },
-    min: (r) => linhaAtual(r)?.alturas.min,
-    max: (r) => linhaAtual(r)?.alturas.max,
-    mostrarSe: (r) => {
-      const linha = linhaAtual(r);
-      return !!linha && !Array.isArray(linha.alturas);
-    },
-  },
-  {
-    id: "larguraMarco",
-    pergunta: "Largura do marco (batente)",
-    tipo: "lista",
-    opcoes: (r) => {
-      const linha = linhaAtual(r);
-      const larguras = linha ? linha.largurasMarco : LARGURAS_MARCO_PADRAO;
-      return larguras
-        .map((cm) => ({ id: String(cm), rotulo: `${cm} cm` }))
-        .concat([{ id: "medir_obra", rotulo: "Vou medir na obra" }, OPCAO_NAO_SEI]);
-    },
-  },
-  {
-    id: "alizar",
-    pergunta: "Guarnição (alizar)",
-    tipo: "lista",
-    opcoes: () => CATALOGO.alizares.map((a) => ({ id: a, rotulo: a })).concat([OPCAO_NAO_SEI]),
-  },
-  {
-    id: "ladoAbertura",
-    pergunta: "Lado de abertura",
-    tipo: "lista",
-    ajuda: "De frente para a porta, de que lado fica a dobradiça?",
-    opcoes: () => [{ id: "Direita", rotulo: "Direita" }, { id: "Esquerda", rotulo: "Esquerda" }, OPCAO_NAO_SEI],
-    mostrarSe: (r) => !!linhaAtual(r)?.perguntaLado,
-  },
-  {
-    id: "fechadura",
-    pergunta: "Fechadura",
-    tipo: "lista",
-    opcoes: () => CATALOGO.fechadurasFlex.map((f) => ({ id: f, rotulo: f })).concat([OPCAO_NAO_SEI]),
-    mostrarSe: (r) => !!linhaAtual(r)?.perguntaFechadura,
-  },
-  {
-    id: "notaFerragens",
-    pergunta: "Ferragens",
-    tipo: "nota",
-    ajuda: (r) => linhaAtual(r)?.ferragens || "",
-    mostrarSe: (r) => {
-      const linha = linhaAtual(r);
-      return !!(linha && linha.ferragens && !linha.perguntaFechadura);
-    },
-  },
-  {
-    id: "escopo",
-    pergunta: "O que você precisa?",
-    tipo: "lista",
-    opcoes: () => [
-      { id: "fornecimento", rotulo: "Fornecimento + instalação" },
-      { id: "so_instalacao", rotulo: "Só instalação (já tenho a porta)" },
-      OPCAO_NAO_SEI,
-    ],
-  },
-  {
-    id: "removerAntiga",
-    pergunta: "Precisa remover a porta antiga?",
-    tipo: "lista",
-    opcoes: () => [{ id: "sim", rotulo: "Sim" }, { id: "nao", rotulo: "Não, é obra nova" }, OPCAO_NAO_SEI],
-    mostrarSe: (r) => !!r.escopo,
   },
   {
     id: "quantidade",
@@ -182,27 +65,6 @@ function etapaPorId(id) {
 
 function etapasVisiveis(respostas) {
   return ETAPAS.filter((e) => !e.mostrarSe || e.mostrarSe(respostas));
-}
-
-// Ao trocar o tipo de abertura, descarta respostas que não existem mais na linha nova (ex: marco
-// de 22cm escolhido na "De giro" não existe na "Pivotante"). Sem isso o pedido que chega pro
-// Maicon poderia pedir uma combinação que o fornecedor não vende.
-function revalidar(respostas) {
-  const linha = linhaAtual(respostas);
-  const largurasFolha = linha ? linha.largurasFolha : LARGURAS_FOLHA_PADRAO;
-  if (respostas.larguraFolha && !["sob_medida", "nao_sei"].includes(respostas.larguraFolha)) {
-    if (!largurasFolha.includes(Number(respostas.larguraFolha))) {
-      delete respostas.larguraFolha;
-      delete respostas.larguraSobMedida;
-    }
-  }
-  const largurasMarco = linha ? linha.largurasMarco : LARGURAS_MARCO_PADRAO;
-  if (respostas.larguraMarco && !["medir_obra", "nao_sei"].includes(respostas.larguraMarco)) {
-    if (!largurasMarco.includes(Number(respostas.larguraMarco))) delete respostas.larguraMarco;
-  }
-  if (respostas.ladoAbertura && !linha?.perguntaLado) delete respostas.ladoAbertura;
-  if (respostas.fechadura && !linha?.perguntaFechadura) delete respostas.fechadura;
-  if (respostas.altura && linha && Array.isArray(linha.alturas)) delete respostas.altura;
 }
 
 // --- Estado ---------------------------------------------------------------
@@ -234,7 +96,6 @@ function optionHtml(etapa, opcao, selecionada) {
         ${opcao.svg ? `<img src="${opcao.svg}" alt="" class="wizard__card-img">` : ""}
         ${opcao.amostra ? `<span class="wizard__amostra" style="background:${escapeHtml(opcao.amostra)}"></span>` : ""}
         <span class="wizard__card-rotulo">${escapeHtml(opcao.rotulo)}</span>
-        ${opcao.ajuda ? `<span class="wizard__card-ajuda">${escapeHtml(opcao.ajuda)}</span>` : ""}
       </button>`;
   }
   return `
@@ -268,23 +129,19 @@ function montarConteudoEtapa(porta, etapa, idxEtapa) {
                value="${escapeHtml(valorAtual)}">
         <button type="button" class="btn btn--primary" data-action="avancar-campo" data-etapa-id="${etapa.id}">Avançar</button>
       </div>`;
-  } else if (etapa.tipo === "nota") {
-    corpo = `
-      <div class="wizard__nota">${escapeHtml(ajudaTexto)}</div>
-      <button type="button" class="btn btn--primary" data-action="avancar">Entendi, continuar</button>`;
   }
 
   const podeVoltar = idxEtapa > 0;
   const nav = `
     <div class="wizard__nav">
       <div>${podeVoltar ? `<button type="button" class="btn btn--ghost" data-action="voltar">Voltar</button>` : ""}</div>
-      <div>${etapa.tipo !== "nota" ? `<button type="button" class="wizard__link" data-action="pular-etapa">Pular esta pergunta</button>` : ""}</div>
+      <div><button type="button" class="wizard__link" data-action="pular-etapa">Pular esta pergunta</button></div>
     </div>
     <button type="button" class="wizard__link wizard__link--tudo" data-action="pular-tudo">Pular tudo e enviar agora →</button>`;
 
   return `
     <h4 class="wizard__pergunta">${escapeHtml(etapa.pergunta)}</h4>
-    ${ajudaTexto && etapa.tipo !== "nota" ? `<p class="wizard__ajuda">${escapeHtml(ajudaTexto)}</p>` : ""}
+    ${ajudaTexto ? `<p class="wizard__ajuda">${escapeHtml(ajudaTexto)}</p>` : ""}
     ${corpo}
     ${nav}`;
 }
@@ -388,38 +245,13 @@ function rotuloDe(etapaId, respostas, valor) {
 
 function montarResumoPorta(porta) {
   const r = porta.respostas;
-  const linha = linhaAtual(r);
   const linhas = [];
   const add = (rotulo, valor) => { if (valor) linhas.push(`• ${rotulo}: ${valor}`); };
 
-  add("Ambiente", rotuloDe("ambiente", r, r.ambiente));
-  add("Abertura", rotuloDe("tipoAbertura", r, r.tipoAbertura));
-  add("Modelo", rotuloDe("modeloFolha", r, r.modeloFolha));
   add("Cor", rotuloDe("cor", r, r.cor));
 
-  let largura = null;
-  if (r.larguraFolha === "sob_medida" && r.larguraSobMedida) largura = r.larguraSobMedida;
-  else if (r.larguraFolha && r.larguraFolha !== "nao_sei") largura = `${r.larguraFolha} cm`;
-  const altura = r.altura ? `${r.altura} cm` : (linha && Array.isArray(linha.alturas) ? `${linha.alturas[0]} cm` : null);
-  if (largura && altura) linhas.push(`• Folha: ${largura} × ${altura}`);
-  else if (largura) linhas.push(`• Largura da folha: ${largura}`);
-
-  if (r.larguraMarco && r.larguraMarco !== "nao_sei") {
-    linhas.push(`• Marco: ${r.larguraMarco === "medir_obra" ? "vai medir na obra" : `${r.larguraMarco} cm`}`);
-  }
-  add("Guarnição", rotuloDe("alizar", r, r.alizar));
-  add("Lado de abertura", rotuloDe("ladoAbertura", r, r.ladoAbertura));
-
-  if (linha?.perguntaFechadura) add("Fechadura", rotuloDe("fechadura", r, r.fechadura));
-  else if (linha?.ferragens) linhas.push(`• Ferragens: ${linha.ferragens}`);
-
-  let escopoTexto = r.escopo === "fornecimento" ? "Fornecimento + instalação"
-    : r.escopo === "so_instalacao" ? "Só instalação (já tem a porta)" : null;
-  if (escopoTexto) {
-    if (r.removerAntiga === "sim") escopoTexto += ", com remoção da porta antiga";
-    else if (r.removerAntiga === "nao") escopoTexto += ", obra nova (sem remoção)";
-    linhas.push(`• Serviço: ${escopoTexto}`);
-  }
+  if (r.larguraFolha === "sob_medida" && r.larguraSobMedida) add("Largura da folha", r.larguraSobMedida);
+  else if (r.larguraFolha && !["sob_medida", "nao_sei"].includes(r.larguraFolha)) add("Largura da folha", `${r.larguraFolha} cm`);
 
   return linhas;
 }
@@ -471,7 +303,6 @@ function selecionarValor(etapaId, valor, elemento) {
   if (!porta) return;
   porta.respostas[etapaId] = valor;
   if (etapaId === "larguraFolha" && valor !== "sob_medida") delete porta.respostas.larguraSobMedida;
-  if (etapaId === "tipoAbertura") revalidar(porta.respostas);
 
   if (elemento) {
     // Marca na hora (pulso/realce via CSS) e só avança de verdade depois de um instante - se a
@@ -560,7 +391,6 @@ function handleClick(evento) {
   switch (alvo.dataset.action) {
     case "abrir-wizard": alvo.hidden = true; adicionarPorta(); break;
     case "escolher": selecionarValor(alvo.dataset.etapaId, alvo.dataset.valor, alvo); break;
-    case "avancar": avancar(); break;
     case "avancar-campo": avancarComCampo(alvo.dataset.etapaId); break;
     case "voltar": voltar(); break;
     case "pular-etapa": avancar(); break;
