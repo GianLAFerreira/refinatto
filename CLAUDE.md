@@ -1,7 +1,10 @@
 # Refinatto
 
 Site institucional de uma página da Refinatto (instalação de pisos laminados, rodapés e portas em
-Ibirama / Alto Vale do Itajaí - SC). O dono é o Maicon. Publicado na Netlify.
+Ibirama / Alto Vale do Itajaí - SC). O dono é o Maicon. Publicado na Netlify em
+https://refinattoinstalacoes.com.br (domínio no registro.br, DNS na Netlify; o endereço antigo
+refinatto-instalacoes.netlify.app continua respondendo). `robots.txt` e `sitemap.xml` na raiz;
+o link canônico e o og:url do index.html apontam para o domínio.
 
 ## Stack
 
