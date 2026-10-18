@@ -5,7 +5,7 @@ const MENSAGEM_PADRAO = "Olá! Vim pelo site da Refinatto e gostaria de um orça
 // Sem confirmação oficial do WhatsApp sobre o limite de caracteres do link "wa.me?text=" - só
 // relatos de corte de mensagem em alguns aparelhos/navegadores na faixa de poucos milhares de
 // caracteres. 3500 dá folga abaixo disso. Medido: mensagem base ~366, +141 por porta totalmente
-// preenchida, +328 por rodapé totalmente preenchido.
+// preenchida, +251 por rodapé totalmente preenchido.
 const LIMITE_CARACTERES_SEGURO = 3500;
 
 function montarLinkWhatsapp(mensagem) {

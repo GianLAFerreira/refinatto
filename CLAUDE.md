@@ -16,7 +16,7 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
   Fontes self-hosted em `fonts/` (Fraunces para títulos, Public Sans para texto).
 - `js/main.js` - número do WhatsApp (`WHATSAPP_NUMERO`), menu mobile, links do WhatsApp, envio do
   formulário (monta a mensagem e abre `wa.me`), animação `.reveal` com IntersectionObserver.
-- `js/catalogo-portas.js` / `js/catalogo-rodapes.js` - SÓ DADOS (linhas, medidas, modelos, cores).
+- `js/catalogo-portas.js` / `js/catalogo-rodapes.js` - SÓ DADOS (medidas, cores, estilos).
   Mudar produto/fornecedor = editar aqui, sem mexer na lógica.
 - `js/porta-wizard.js` / `js/rodape-wizard.js` - configuradores passo a passo dentro do form de
   orçamento. Aparecem conforme o "Serviço desejado" escolhido. Expõem `window.PortaWizard` e
@@ -35,7 +35,7 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
 - Nome do fornecedor e códigos de cor (Branco UV...) NUNCA aparecem em texto visível do site; só vão
   na mensagem do WhatsApp quando `incluirCodigoFornecedor` é true.
 - Limite de ~3500 caracteres no link do WhatsApp (`LIMITE_CARACTERES_SEGURO`); acima disso pede
-  confirmação. Limites de 5 portas e 5 ambientes de rodapé por orçamento.
+  confirmação. Limites de 5 portas e 5 rodapés por orçamento.
 - Comentários e textos do site em português, tom informal em primeira pessoa (o Maicon falando).
 - `og:url` ainda não definido nas meta tags; o comentário cita um `HOSPEDAGEM.md` que não veio no
   download da Netlify.

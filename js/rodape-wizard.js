@@ -10,11 +10,9 @@
 
 const CATALOGO_R = window.CATALOGO_RODAPES;
 
-const LIMITE_AMBIENTES = 5;
+const LIMITE_RODAPES = 5;
 
 const OPCAO_NAO_SEI_R = { id: "nao_sei", rotulo: "Não sei / quero orientação" };
-
-const AMOSTRAS_COR = { branco: "#f2f2f0", amadeirado: "#a9713f" };
 
 function escapeHtmlR(valor) {
   return String(valor ?? "").replace(/[&<>"']/g, (c) => (
@@ -23,12 +21,6 @@ function escapeHtmlR(valor) {
 }
 
 const ETAPAS_R = [
-  {
-    id: "ambiente",
-    pergunta: "Onde vai o rodapé?",
-    tipo: "lista",
-    opcoes: () => CATALOGO_R.ambientes.map((a) => ({ id: a, rotulo: a })).concat([OPCAO_NAO_SEI_R]),
-  },
   {
     id: "estilo",
     pergunta: "Estilo do rodapé",
@@ -43,14 +35,6 @@ const ETAPAS_R = [
     tipo: "lista",
     opcoes: () => CATALOGO_R.larguras
       .map((cm) => ({ id: String(cm), rotulo: `${cm} cm` }))
-      .concat([OPCAO_NAO_SEI_R]),
-  },
-  {
-    id: "cor",
-    pergunta: "Cor",
-    tipo: "cards",
-    opcoes: () => CATALOGO_R.cores
-      .map((c) => ({ id: c.id, rotulo: c.rotulo, amostra: AMOSTRAS_COR[c.id] }))
       .concat([OPCAO_NAO_SEI_R]),
   },
   {
@@ -106,7 +90,6 @@ function optionHtmlR(etapa, opcao, selecionada) {
       <button type="button" class="wizard__card${marcado}" data-action="escolher-r"
               data-etapa-id="${etapa.id}" data-valor="${escapeHtmlR(opcao.id)}">
         ${opcao.svg ? `<img src="${opcao.svg}" alt="" class="wizard__card-img">` : ""}
-        ${opcao.amostra ? `<span class="wizard__amostra" style="background:${escapeHtmlR(opcao.amostra)}"></span>` : ""}
         <span class="wizard__card-rotulo">${escapeHtmlR(opcao.rotulo)}</span>
       </button>`;
   }
@@ -218,9 +201,9 @@ function renderResumosR() {
 
   let rodape = "";
   if (itens.length > 0 && indiceItem === -1) {
-    rodape = itens.length >= LIMITE_AMBIENTES
-      ? `<p class="wizard__ajuda">Limite de ${LIMITE_AMBIENTES} ambientes por orçamento. Para mais, combine direto pelo WhatsApp.</p>`
-      : `<button type="button" class="btn btn--ghost" data-action="adicionar-item-r">+ Adicionar outro ambiente</button>`;
+    rodape = itens.length >= LIMITE_RODAPES
+      ? `<p class="wizard__ajuda">Limite de ${LIMITE_RODAPES} rodapés por orçamento. Para mais, combine direto pelo WhatsApp.</p>`
+      : `<button type="button" class="btn btn--ghost" data-action="adicionar-item-r">+ Adicionar outro rodapé</button>`;
   }
 
   container.innerHTML = cards + rodape;
@@ -240,10 +223,8 @@ function montarResumoItem(item) {
   const linhas = [];
   const add = (rotulo, valor) => { if (valor) linhas.push(`• ${rotulo}: ${valor}`); };
 
-  add("Ambiente", rotuloDeR("ambiente", r.ambiente));
   add("Estilo", rotuloDeR("estilo", r.estilo));
   if (r.largura && r.largura !== "nao_sei") linhas.push(`• Largura: ${r.largura} cm`);
-  add("Cor", rotuloDeR("cor", r.cor));
   if (r.metragem) linhas.push(`• Metragem estimada: ${r.metragem} m`);
 
   const escopoTexto = r.escopo === "fornecimento" ? "Fornecimento + instalação"
@@ -328,8 +309,8 @@ function pularTudoEEnviarR() {
 }
 
 function adicionarItemR() {
-  if (itens.length >= LIMITE_AMBIENTES) {
-    alert(`Você pode configurar até ${LIMITE_AMBIENTES} ambientes de rodapé neste orçamento. Para mais, combine direto pelo WhatsApp depois de enviar.`);
+  if (itens.length >= LIMITE_RODAPES) {
+    alert(`Você pode configurar até ${LIMITE_RODAPES} rodapés neste orçamento. Para mais, combine direto pelo WhatsApp depois de enviar.`);
     return;
   }
   itens.push({ respostas: {} });
@@ -354,8 +335,8 @@ function removerItemR(idx) {
 }
 
 function duplicarItemR(idx) {
-  if (itens.length >= LIMITE_AMBIENTES) {
-    alert(`Você pode configurar até ${LIMITE_AMBIENTES} ambientes de rodapé neste orçamento. Para mais, combine direto pelo WhatsApp depois de enviar.`);
+  if (itens.length >= LIMITE_RODAPES) {
+    alert(`Você pode configurar até ${LIMITE_RODAPES} rodapés neste orçamento. Para mais, combine direto pelo WhatsApp depois de enviar.`);
     return;
   }
   itens.push({ respostas: { ...itens[idx].respostas } });
