@@ -88,6 +88,48 @@ function botaoConfirmavel(rotulo, rotuloConfirmar, aoConfirmar, classe) {
 
 const moeda = (valor) => formatarMoeda(valor);
 
+// Telefone brasileiro com DDD: (47) 9999-9999 (fixo) ou (47) 99999-9999 (celular). O formato
+// acompanha a digitação: até 10 dígitos mostra como fixo, no 11º vira celular.
+const DIGITOS_TELEFONE = 11;
+
+function formatarTelefone(digitos) {
+  const d = digitos.slice(0, DIGITOS_TELEFONE);
+  if (!d) return "";
+  if (d.length <= 2) return `(${d}`;
+  const ddd = `(${d.slice(0, 2)}) `;
+  const resto = d.slice(2);
+  if (resto.length <= 4) return ddd + resto;
+  const corte = d.length === DIGITOS_TELEFONE ? 5 : 4;
+  return `${ddd}${resto.slice(0, corte)}-${resto.slice(corte)}`;
+}
+
+function mascararTelefone(evento) {
+  const input = evento.target;
+  const anterior = input.dataset.digitos ?? "";
+  const cursor = input.selectionStart ?? input.value.length;
+  let digitos = input.value.replace(/\D/g, "");
+  let digitosAntesDoCursor = input.value.slice(0, cursor).replace(/\D/g, "").length;
+
+  // Apagar só um caractere da máscara ("-", ")", espaço) não muda os dígitos; sem isto a máscara
+  // voltaria na hora e o backspace pareceria travado. Então apaga o dígito anterior a ele.
+  if (evento.inputType === "deleteContentBackward" && digitos === anterior && digitosAntesDoCursor > 0) {
+    digitos = digitos.slice(0, digitosAntesDoCursor - 1) + digitos.slice(digitosAntesDoCursor);
+    digitosAntesDoCursor -= 1;
+  }
+
+  digitos = digitos.slice(0, DIGITOS_TELEFONE);
+  input.value = formatarTelefone(digitos);
+  input.dataset.digitos = digitos;
+
+  // Recoloca o cursor logo depois do mesmo dígito em que estava (corrigir no meio do número não
+  // joga o cursor pro fim).
+  let posicao = 0;
+  for (let vistos = 0; posicao < input.value.length && vistos < digitosAntesDoCursor; posicao++) {
+    if (/\d/.test(input.value[posicao])) vistos++;
+  }
+  if (document.activeElement === input) input.setSelectionRange(posicao, posicao);
+}
+
 // --- Armazenamento local -------------------------------------------------------
 
 function lerLocal(chave) {
@@ -253,7 +295,12 @@ function renderConteudo() {
       h("h2", { text: "Cliente" }),
       campo("Nome do cliente", h("input", { type: "text", value: c.nome, maxlength: "120", autocomplete: "off", required: true, id: "clienteNome", onInput: atualizarCliente("nome") })),
       h("div", { class: "g-linha2" },
-        campo("Telefone", h("input", { type: "tel", value: c.telefone, maxlength: "40", autocomplete: "off", onInput: atualizarCliente("telefone") })),
+        campo("Telefone", h("input", {
+          type: "tel", inputmode: "numeric", value: formatarTelefone(c.telefone.replace(/\D/g, "")), maxlength: "15",
+          "data-digitos": c.telefone.replace(/\D/g, "").slice(0, DIGITOS_TELEFONE),
+          placeholder: "(47) 99999-9999", autocomplete: "off",
+          onInput: (e) => { mascararTelefone(e); c.telefone = e.target.value; salvar(); },
+        })),
         campo("Cidade / bairro", h("input", { type: "text", value: c.cidade, maxlength: "80", autocomplete: "off", onInput: atualizarCliente("cidade") })),
       ),
     ),
