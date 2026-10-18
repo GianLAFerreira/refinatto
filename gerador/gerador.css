@@ -200,6 +200,7 @@ body.modo-cliente .g-interno { display: none !important; }
 }
 
 .g-caixa__texto { display: flex; flex-direction: column; line-height: 1.3; }
+.g-cartao > .g-caixa { margin-bottom: 12px; }
 .g-caixa__texto small { color: var(--cinza); font-size: 0.8rem; }
 
 .g-erro {

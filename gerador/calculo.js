@@ -155,6 +155,7 @@ export function calcularPorta(porta, tabela) {
     sobMedida,
     foraDoPadrao,
     custoUnitario,
+    unidades: quantidade,
     custo: arredondar(custoUnitario * quantidade),
   };
 }
@@ -167,14 +168,26 @@ export function calcularRodape(rodape, tabela) {
   if (!perfil) return { erro: "Escolha o perfil do rodapé.", linhas: [] };
   if (!(metros > 0)) return { erro: "Informe a metragem do rodapé.", linhas: [] };
 
+  // custoUnitario/unidades: o preço de venda é calculado por unidade (metro ou caixa) e depois
+  // multiplicado, para "valor × quantidade = total" fechar no centavo no PDF.
   if (rodape.compra === "caixa") {
     const porCaixa = tabela.rodapes.metrosPorCaixa;
     const caixas = Math.ceil(metros / porCaixa - 1e-9);
     const custo = arredondar(caixas * perfil.caixa);
-    return { linhas: [{ rotulo: `${caixas} caixa${caixas > 1 ? "s" : ""} ${perfil.rotulo} (${String(porCaixa).replace(".", ",")} m cada)`, valor: custo }], metros, caixas, custo };
+    return {
+      linhas: [{ rotulo: `${caixas} caixa${caixas > 1 ? "s" : ""} ${perfil.rotulo} (${numeroBr(porCaixa)} m cada)`, valor: custo }],
+      metros, caixas, custoUnitario: perfil.caixa, unidades: caixas, custo,
+    };
   }
   const custo = arredondar(metros * perfil.metro);
-  return { linhas: [{ rotulo: `${String(metros).replace(".", ",")} m de ${perfil.rotulo}`, valor: custo }], metros, custo };
+  return {
+    linhas: [{ rotulo: `${numeroBr(metros)} m de ${perfil.rotulo}`, valor: custo }],
+    metros, custoUnitario: perfil.metro, unidades: metros, custo,
+  };
+}
+
+function numeroBr(valor) {
+  return String(arredondar(valor)).replace(".", ",");
 }
 
 // --- Orçamento ---------------------------------------------------------------
@@ -187,14 +200,15 @@ export function resumirOrcamento(orcamento, tabela) {
   const grupos = { porta: { custo: 0, preco: 0, itens: 0 }, rodape: { custo: 0, preco: 0, itens: 0 } };
   const itens = orcamento.itens.map((item) => {
     const calculo = calcularItem(item, tabela);
-    const preco = calculo.erro ? 0 : precoDeVenda(calculo.custo, orcamento.percentual);
+    const precoUnitario = calculo.erro ? 0 : precoDeVenda(calculo.custoUnitario, orcamento.percentual);
+    const preco = calculo.erro ? 0 : arredondar(precoUnitario * calculo.unidades);
     if (!calculo.erro) {
       const grupo = grupos[item.tipo];
       grupo.custo = arredondar(grupo.custo + calculo.custo);
       grupo.preco = arredondar(grupo.preco + preco);
       grupo.itens += 1;
     }
-    return { item, calculo, preco };
+    return { item, calculo, precoUnitario, preco };
   });
   const custo = arredondar(grupos.porta.custo + grupos.rodape.custo);
   const preco = arredondar(grupos.porta.preco + grupos.rodape.preco);
@@ -204,16 +218,17 @@ export function resumirOrcamento(orcamento, tabela) {
 // --- Textos para o cliente (PDF e resumo na tela) ---------------------------
 // Nunca mencionam custo, percentual, acréscimos internos ou fornecedor.
 
+// Formato pensado para a tabela do PDF: "titulo" é a linha principal (ex: "Kit porta de abrir
+// 800 × 2100 mm"), "detalhes" vira a descrição abaixo dela e "quantidade" vai na coluna Qtd.
 export function descreverPorta(porta, calculo, tabela) {
   const linha = tabela.folhas.find((f) => f.id === porta.linha);
   const abertura = tabela.aberturas.find((a) => a.id === porta.abertura);
   const medida = calculo.sobMedida
-    ? `medida especial ${porta.sobMedida.largura} × ${porta.sobMedida.altura} mm`
+    ? `sob medida ${porta.sobMedida.largura} × ${porta.sobMedida.altura} mm`
     : `${calculo.medidaCotada.largura} × ${calculo.medidaCotada.altura} mm`;
-  const titulo = `Porta ${abertura.rotulo.toLowerCase()}, folha ${linha.rotulo}, ${medida}`;
+  const titulo = `Kit porta ${abertura.rotulo.toLowerCase()} ${medida}`;
 
-  const detalhes = [];
-  if (porta.friso && linha.friso) detalhes.push("folha com friso");
+  const detalhes = [`folha ${linha.rotulo}${porta.friso && linha.friso ? " com friso" : ""}`];
   const batente = tabela.batentes.precos.find((b) => String(b.largura) === String(porta.batente));
   if (batente) detalhes.push(`batente ${batente.largura} mm`);
   const guarnicao = tabela.guarnicoes.precos.find((g) => g.id === porta.guarnicao);
@@ -231,16 +246,20 @@ export function descreverPorta(porta, calculo, tabela) {
   for (const s of tabela.servicos) if (porta.servicos.includes(s.id)) detalhes.push(s.rotulo.toLowerCase());
   for (const a of tabela.acessorios) if (porta.acessorios.includes(a.id)) detalhes.push(a.rotulo.toLowerCase());
 
-  return { titulo, detalhes };
+  return { titulo, detalhes, quantidade: `${calculo.quantidade} un.` };
 }
 
 export function descreverRodape(rodape, calculo, tabela) {
   const perfil = tabela.rodapes.precos.find((p) => p.id === rodape.perfil);
-  const metros = String(calculo.metros).replace(".", ",");
-  const quantidade = calculo.caixas
-    ? `${calculo.caixas} caixa${calculo.caixas > 1 ? "s" : ""} (${String(arredondar(calculo.caixas * tabela.rodapes.metrosPorCaixa)).replace(".", ",")} m)`
-    : `${metros} m`;
-  return { titulo: `Rodapé ${perfil.rotulo}, ${quantidade}`, detalhes: [] };
+  if (calculo.caixas) {
+    const porCaixa = tabela.rodapes.metrosPorCaixa;
+    return {
+      titulo: `Rodapé ${perfil.rotulo}`,
+      detalhes: [`caixas com ${numeroBr(porCaixa)} m (${numeroBr(calculo.caixas * porCaixa)} m no total, para ${numeroBr(calculo.metros)} m de parede)`],
+      quantidade: `${calculo.caixas} cx.`,
+    };
+  }
+  return { titulo: `Rodapé ${perfil.rotulo}`, detalhes: [], quantidade: `${numeroBr(calculo.metros)} m` };
 }
 
 export function descreverItem(item, calculo, tabela) {

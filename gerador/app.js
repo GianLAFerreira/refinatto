@@ -14,6 +14,7 @@ import { gerarPdf, formatarMoeda } from "./pdf.js";
 
 const CHAVE_RASCUNHO = "refinatto.gerador.rascunho";
 const CHAVE_PERCENTUAL = "refinatto.gerador.percentual";
+const CHAVE_NUMERACAO = "refinatto.gerador.numeracao";
 const PERCENTUAIS_RAPIDOS = [30, 40, 50, 60, 80, 100];
 const PERCENTUAL_PADRAO = 40;
 const TEMPO_CONFIRMACAO_MS = 3000;
@@ -140,13 +141,33 @@ function gravarLocal(chave, valor) {
   try { localStorage.setItem(chave, JSON.stringify(valor)); } catch { /* modo privado / cota cheia: segue só em memória */ }
 }
 
+// Numeração sequencial por aparelho, no formato 0049-26 (sequência-ano). O número é só sugerido:
+// o campo é editável, e o maior número já usado no PDF passa a ser a base do próximo.
+function proximoNumero() {
+  const ano = String(new Date().getFullYear()).slice(-2);
+  const salvo = lerLocal(CHAVE_NUMERACAO);
+  const sequencia = salvo?.ano === ano && Number.isInteger(salvo.sequencia) ? salvo.sequencia + 1 : 1;
+  return `${String(sequencia).padStart(4, "0")}-${ano}`;
+}
+
+function registrarNumero(numero) {
+  const m = String(numero).match(/(\d+)-(\d{2})$/);
+  if (!m) return;
+  const salvo = lerLocal(CHAVE_NUMERACAO);
+  const sequencia = Number(m[1]);
+  if (salvo?.ano !== m[2] || sequencia > salvo.sequencia) gravarLocal(CHAVE_NUMERACAO, { ano: m[2], sequencia });
+}
+
 function orcamentoVazio() {
   const salvo = lerLocal(CHAVE_PERCENTUAL);
   return {
     versao: 1,
+    numero: proximoNumero(),
     cliente: { nome: "", telefone: "", cidade: "" },
     percentual: typeof salvo === "number" && Number.isFinite(salvo) && salvo >= 0 ? salvo : PERCENTUAL_PADRAO,
     validadeDias: 7,
+    mostrarValores: false,
+    formasPagamento: tabela?.empresa?.formasPagamento ?? "",
     observacoes: "",
     itens: [],
   };
@@ -326,12 +347,24 @@ function renderConteudo() {
 
     h("section", { class: "g-cartao" },
       h("h2", { text: "Detalhes do PDF" }),
-      campo("Validade (dias)", h("input", {
-        type: "number", inputmode: "numeric", min: "1", max: "90", value: orcamento.validadeDias,
-        onInput: (e) => { orcamento.validadeDias = Math.min(90, Math.max(1, parseInt(e.target.value, 10) || 7)); salvar(); },
+      h("div", { class: "g-linha2" },
+        campo("Nº do orçamento", h("input", {
+          type: "text", value: orcamento.numero, maxlength: "20", autocomplete: "off",
+          onInput: (e) => { orcamento.numero = e.target.value.trim(); salvar(); },
+        })),
+        campo("Validade (dias)", h("input", {
+          type: "number", inputmode: "numeric", min: "1", max: "90", value: orcamento.validadeDias,
+          onInput: (e) => { orcamento.validadeDias = Math.min(90, Math.max(1, parseInt(e.target.value, 10) || 7)); salvar(); },
+        })),
+      ),
+      caixa("Mostrar valor de cada item", orcamento.mostrarValores, (v) => { orcamento.mostrarValores = v; salvar(); },
+        "Desligado: o PDF mostra só o total de portas e de rodapés"),
+      campo("Formas de pagamento", h("input", {
+        type: "text", value: orcamento.formasPagamento, maxlength: "200", autocomplete: "off",
+        onInput: (e) => { orcamento.formasPagamento = e.target.value; salvar(); },
       })),
       campo("Observações", h("textarea", {
-        rows: "3", maxlength: "1500", placeholder: "Ex: condições de pagamento, prazo de entrega…",
+        rows: "3", maxlength: "1500", placeholder: "Ex: prazo de entrega, condições de parcelamento…",
         onInput: (e) => { orcamento.observacoes = e.target.value; salvar(); },
       }, orcamento.observacoes)),
     ),
@@ -406,14 +439,13 @@ function renderItens() {
 function cartaoResumo(item) {
   const calculo = calcularItem(item, tabela);
   const descricao = calculo.erro ? null : descreverItem(item, calculo, tabela);
-  const quantidade = item.tipo === "porta" && !calculo.erro ? `${calculo.quantidade}× ` : "";
 
   return h("article", { class: `g-item${calculo.erro ? " g-item--erro" : ""}`, "data-item-id": item.id },
     h("button", { type: "button", class: "g-item__corpo", onClick: () => editar(item.id), "aria-label": `Editar ${rotuloDoItem(item)}` },
       h("span", { class: "g-item__rotulo", text: rotuloDoItem(item) }),
       calculo.erro
         ? h("span", { class: "g-item__erro", text: calculo.erro })
-        : h("span", { class: "g-item__descricao", text: quantidade + descricao.titulo }),
+        : h("span", { class: "g-item__descricao", text: `${descricao.quantidade} · ${descricao.titulo}` }),
       descricao?.detalhes.length ? h("span", { class: "g-item__detalhes", text: descricao.detalhes.join(", ") }) : null,
       h("span", { class: "g-item__valores", "data-valores": item.id }),
     ),
@@ -697,8 +729,11 @@ async function gerar() {
 
   try {
     if (pdfAtual) URL.revokeObjectURL(pdfAtual.url);
+    if (!orcamento.numero) orcamento.numero = proximoNumero();
     const { blob, nomeArquivo } = await gerarPdf(orcamento, resumo, tabela);
     pdfAtual = { blob, nomeArquivo, url: URL.createObjectURL(blob) };
+    registrarNumero(orcamento.numero);
+    salvar();
   } catch (erro) {
     console.error(erro);
     return avisar("Não foi possível gerar o PDF. Tente de novo.");

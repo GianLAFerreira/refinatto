@@ -56,8 +56,11 @@ cliente. Não há link para ela no site público.
   `privado/tabela-precos.json` (gitignored) e só a versão criptografada vai pro git
   (`netlify/lib/tabela.enc.mjs`). Nomes de produto/regras só existem dentro da tabela; nenhum valor
   de custo pode aparecer em código, teste ou commit.
-- PDF do cliente: itens descritos sem preço, total por serviço (portas/rodapés) e total geral.
-  Nunca mostra custo, percentual, acréscimos internos nem fornecedor. Instalação está embutida no
+- PDF do cliente (layout de documento comercial: empresa, cliente, tabela de itens, totais,
+  condições, pagamento, assinaturas). Valor por item é opcional ("Mostrar valor de cada item",
+  desligado por padrão: só totais por serviço). Nunca mostra custo, percentual, acréscimos
+  internos nem fornecedor. Dados da empresa (CNPJ, endereço, pagamento padrão) ficam em `empresa`
+  dentro da tabela criptografada. Numeração 0049-26 sugerida por aparelho (localStorage), editável. Instalação está embutida no
   percentual. "Modo cliente" esconde da tela tudo com classe `.g-interno`.
 - Regras de preço (acréscimos por altura, abertura, linha e porta fora do padrão) ficam DENTRO da
   tabela criptografada (`regras` e campos de cada item); `calculo.js` só as aplica. Não descrever
