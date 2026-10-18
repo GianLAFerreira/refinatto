@@ -1,0 +1,17 @@
+# Site estático, sem build: a Netlify publica a raiz do repositório como está.
+[build]
+  publish = "."
+  command = ""
+
+# Arquivos do repositório que não fazem parte do site não devem ficar acessíveis pela URL.
+[[redirects]]
+  from = "/CLAUDE.md"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/netlify.toml"
+  to = "/404"
+  status = 404
+  force = true

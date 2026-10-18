@@ -7,7 +7,7 @@ Ibirama / Alto Vale do Itajaí - SC). O dono é o Maicon. Publicado na Netlify.
 
 HTML + CSS + JavaScript puro. Sem build, sem framework, sem dependências, sem package.json.
 Para rodar localmente: `python3 -m http.server 8000` na raiz e abrir http://localhost:8000.
-Deploy = subir os arquivos da raiz como estão (Netlify publica a pasta raiz).
+Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `netlify.toml`).
 
 ## Estrutura
 
