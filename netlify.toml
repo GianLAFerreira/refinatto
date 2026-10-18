@@ -1,4 +1,5 @@
-# Site estático, sem build: a Netlify publica a raiz do repositório como está.
+# Site estático, sem build: a Netlify publica a raiz do repositório como está. As funções do
+# gerador de orçamentos (netlify/functions) são empacotadas automaticamente pela Netlify.
 [build]
   publish = "."
   command = ""
@@ -15,3 +16,35 @@
   to = "/404"
   status = 404
   force = true
+
+[[redirects]]
+  from = "/netlify/*"
+  to = "/404"
+  status = 404
+  force = true
+
+[[redirects]]
+  from = "/scripts/*"
+  to = "/404"
+  status = 404
+  force = true
+
+# Cabeçalhos de segurança para o site todo.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Strict-Transport-Security = "max-age=31536000"
+
+# Gerador de orçamentos: área restrita. CSP sem nada de fora (nem CDN), não pode ser embutido em
+# iframe, não indexa em buscador e o navegador não guarda cópia em cache.
+[[headers]]
+  for = "/gerador/*"
+  [headers.values]
+    Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'; frame-ancestors 'none'"
+    X-Frame-Options = "DENY"
+    X-Robots-Tag = "noindex, nofollow"
+    Referrer-Policy = "no-referrer"
+    Cache-Control = "no-store"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
