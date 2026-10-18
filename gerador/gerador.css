@@ -347,7 +347,7 @@ body.modo-cliente .g-interno { display: none !important; }
 #chipsPercentual { margin-bottom: 12px; }
 
 .g-secao-itens { margin-bottom: 16px; }
-.g-secao-itens__topo { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 8px 2px 12px; }
+.g-secao-itens__topo { display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 2px 12px; margin: 8px 2px 12px; }
 .g-secao-itens h2 { font-size: 1.25rem; }
 .g-tabela-versao { font-size: 0.75rem; color: var(--cinza); text-align: right; }
 
@@ -366,6 +366,8 @@ body.modo-cliente .g-interno { display: none !important; }
 
 /* Item (resumo) */
 .g-item {
+  /* Ao rolar até um item, ele para abaixo do topo fixo em vez de ficar escondido atrás dele. */
+  scroll-margin-top: 72px;
   border-radius: var(--radius);
   background: var(--branco);
   border: 1px solid var(--linha);
@@ -388,7 +390,9 @@ body.modo-cliente .g-interno { display: none !important; }
 }
 
 .g-item__rotulo { grid-column: 1; font-weight: 700; color: var(--noite); }
-.g-item__descricao, .g-item__erro, .g-item__detalhes { grid-column: 1; font-size: 0.9rem; }
+/* Descrição usa a largura toda; o preço fica só na linha do rótulo (no celular a coluna do preço
+   espremia o texto). */
+.g-item__descricao, .g-item__erro, .g-item__detalhes { grid-column: 1 / -1; font-size: 0.9rem; }
 .g-item__descricao { color: var(--carvao); }
 .g-item__detalhes { color: var(--cinza); font-size: 0.82rem; }
 .g-item__erro { color: var(--perigo); font-weight: 600; }
@@ -401,7 +405,7 @@ body.modo-cliente .g-interno { display: none !important; }
   white-space: nowrap;
 }
 
-.g-item__corpo .g-item__valores { grid-column: 2; grid-row: 1 / span 3; }
+.g-item__corpo .g-item__valores { grid-column: 2; grid-row: 1; }
 .g-item__valores strong { color: var(--noite); font-size: 1.05rem; }
 .g-item__valores small { color: var(--cinza); font-size: 0.78rem; }
 
@@ -516,7 +520,7 @@ body.modo-cliente .g-interno { display: none !important; }
 .g-barra__totais { display: flex; flex-direction: column; min-width: 0; line-height: 1.25; }
 .g-barra__rotulo { font-size: 0.72rem; letter-spacing: 0.05em; text-transform: uppercase; color: var(--areia); opacity: 0.8; }
 .g-barra__valor { font-size: 1.35rem; color: var(--dourado-claro); }
-.g-barra small { color: var(--areia); opacity: 0.75; font-size: 0.75rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.g-barra small { color: var(--areia); opacity: 0.75; font-size: 0.75rem; white-space: nowrap; }
 .g-barra .g-btn { flex: none; }
 
 /* Diálogo do PDF */

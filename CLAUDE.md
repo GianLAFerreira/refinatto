@@ -6,7 +6,8 @@ Ibirama / Alto Vale do Itajaí - SC). O dono é o Maicon. Publicado na Netlify.
 ## Stack
 
 HTML + CSS + JavaScript puro. Sem build, sem framework, sem dependências, sem package.json.
-Para rodar localmente: `python3 -m http.server 8000` na raiz e abrir http://localhost:8000.
+Para rodar localmente: `node scripts/servidor-local.mjs` e abrir http://localhost:8888 (serve o site
+e as funções do gerador). Só o site público: `python3 -m http.server 8000` também serve.
 Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `netlify.toml`).
 
 ## Estrutura
@@ -39,3 +40,38 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
 - Comentários e textos do site em português, tom informal em primeira pessoa (o Maicon falando).
 - `og:url` ainda não definido nas meta tags; o comentário cita um `HOSPEDAGEM.md` que não veio no
   download da Netlify.
+
+## Gerador de orçamentos (`/gerador/`)
+
+Área restrita, de uso interno do Maicon (principalmente no celular), que monta orçamentos de portas
+e rodapés com base na tabela de custos + um percentual, e gera o PDF do
+cliente. Não há link para ela no site público.
+
+- `gerador/` - app (ES modules): `app.js` (interface), `calculo.js` (regras e cálculo, funções
+  puras), `pdf.js` (PDF com jsPDF em `gerador/vendor/`, sem CDN), `gerador.css`.
+- `netlify/functions/` - `login` (POST /api/login, limite de 5 tentativas/min por IP), `tabela`
+  (GET /api/tabela, só com sessão), `logout`. `netlify/lib/` tem cripto (AES-256-GCM, scrypt),
+  sessão (token HMAC em cookie `__Host-gerador` HttpOnly/Secure/SameSite=Strict, 12 h) e respostas.
+- A tabela de custos é CONFIDENCIAL e o repositório é público: o texto puro fica em
+  `privado/tabela-precos.json` (gitignored) e só a versão criptografada vai pro git
+  (`netlify/lib/tabela.enc.mjs`). Nomes de produto/regras só existem dentro da tabela; nenhum valor
+  de custo pode aparecer em código, teste ou commit.
+- PDF do cliente: itens descritos sem preço, total por serviço (portas/rodapés) e total geral.
+  Nunca mostra custo, percentual, acréscimos internos nem fornecedor. Instalação está embutida no
+  percentual. "Modo cliente" esconde da tela tudo com classe `.g-interno`.
+- Regras de preço (acréscimos por altura, abertura, linha e porta fora do padrão) ficam DENTRO da
+  tabela criptografada (`regras` e campos de cada item); `calculo.js` só as aplica. Não descrever
+  as regras nem os valores neste arquivo, que é público.
+
+### Configuração (segredos)
+
+Variáveis de ambiente na Netlify (Site configuration -> Environment variables), iguais ao `.env`
+local (gitignored): `GERADOR_USUARIO`, `GERADOR_SENHA_HASH`, `SESSAO_SEGREDO`, `TABELA_CHAVE`.
+
+- `node scripts/gerador/configurar.mjs segredos` - cria SESSAO_SEGREDO e TABELA_CHAVE no `.env`.
+- `node scripts/gerador/configurar.mjs senha` - define usuário e senha (interativo; rodar no terminal).
+- Atualizar preços: editar `privado/tabela-precos.json` e rodar
+  `node scripts/gerador/configurar.mjs criptografar`, depois commit do `tabela.enc.mjs`.
+- Em outro PC: criar o `.env` com os valores da Netlify e rodar `... descriptografar` para recriar
+  `privado/tabela-precos.json`.
+- Trocar `SESSAO_SEGREDO` derruba todas as sessões; trocar `TABELA_CHAVE` exige criptografar de novo.

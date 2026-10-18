@@ -171,10 +171,10 @@ export function calcularRodape(rodape, tabela) {
     const porCaixa = tabela.rodapes.metrosPorCaixa;
     const caixas = Math.ceil(metros / porCaixa - 1e-9);
     const custo = arredondar(caixas * perfil.caixa);
-    return { linhas: [{ rotulo: `${caixas} caixa${caixas > 1 ? "s" : ""} ${perfil.rotulo} (${porCaixa} m cada)`, valor: custo }], metros, caixas, custo };
+    return { linhas: [{ rotulo: `${caixas} caixa${caixas > 1 ? "s" : ""} ${perfil.rotulo} (${String(porCaixa).replace(".", ",")} m cada)`, valor: custo }], metros, caixas, custo };
   }
   const custo = arredondar(metros * perfil.metro);
-  return { linhas: [{ rotulo: `${metros} m de ${perfil.rotulo}`, valor: custo }], metros, custo };
+  return { linhas: [{ rotulo: `${String(metros).replace(".", ",")} m de ${perfil.rotulo}`, valor: custo }], metros, custo };
 }
 
 // --- Orçamento ---------------------------------------------------------------

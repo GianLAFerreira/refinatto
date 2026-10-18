@@ -15,6 +15,7 @@ import { gerarPdf, formatarMoeda } from "./pdf.js";
 const CHAVE_RASCUNHO = "refinatto.gerador.rascunho";
 const CHAVE_PERCENTUAL = "refinatto.gerador.percentual";
 const PERCENTUAIS_RAPIDOS = [30, 40, 50, 60, 80, 100];
+const PERCENTUAL_PADRAO = 40;
 const TEMPO_CONFIRMACAO_MS = 3000;
 
 let tabela = null;
@@ -98,11 +99,11 @@ function gravarLocal(chave, valor) {
 }
 
 function orcamentoVazio() {
-  const percentual = Number(lerLocal(CHAVE_PERCENTUAL));
+  const salvo = lerLocal(CHAVE_PERCENTUAL);
   return {
     versao: 1,
     cliente: { nome: "", telefone: "", cidade: "" },
-    percentual: Number.isFinite(percentual) && percentual >= 0 ? percentual : 40,
+    percentual: typeof salvo === "number" && Number.isFinite(salvo) && salvo >= 0 ? salvo : PERCENTUAL_PADRAO,
     validadeDias: 7,
     observacoes: "",
     itens: [],
@@ -160,7 +161,13 @@ function mostrarFalha(mensagem) {
 }
 
 function mostrarLogin(mensagem) {
+  // Ao sair, custos e o orçamento aberto saem também do DOM (não só da vista).
   tabela = null;
+  orcamento = null;
+  $("conteudo").replaceChildren();
+  $("barraTotal").replaceChildren();
+  if ($("dialogoPdf").open) $("dialogoPdf").close();
+  if (pdfAtual) { URL.revokeObjectURL(pdfAtual.url); pdfAtual = null; }
   mostrarTela("telaLogin");
   const erro = $("loginErro");
   erro.hidden = !mensagem;
@@ -608,7 +615,8 @@ function atualizarValores() {
     h("div", { class: "g-barra__totais" },
       h("span", { class: "g-barra__rotulo", text: "Total do orçamento" }),
       h("strong", { class: "g-barra__valor", text: moeda(resumo.preco) }),
-      temItens ? h("small", { class: "g-interno", text: `custo ${moeda(resumo.custo)} · lucro ${moeda(resumo.lucro)} (${margem}%)` }) : null,
+      temItens ? h("small", { class: "g-interno", text: `custo ${moeda(resumo.custo)}` }) : null,
+      temItens ? h("small", { class: "g-interno", text: `lucro ${moeda(resumo.lucro)} (${margem}%)` }) : null,
     ),
     h("button", {
       type: "button", class: "g-btn g-btn--primario", text: "Gerar PDF", disabled: !temItens,
