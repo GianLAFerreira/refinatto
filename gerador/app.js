@@ -166,7 +166,7 @@ function orcamentoVazio() {
     cliente: { nome: "", telefone: "", cidade: "" },
     percentual: typeof salvo === "number" && Number.isFinite(salvo) && salvo >= 0 ? salvo : PERCENTUAL_PADRAO,
     validadeDias: 7,
-    mostrarValores: false,
+    mostrarValores: true,
     formasPagamento: tabela?.empresa?.formasPagamento ?? "",
     observacoes: "",
     itens: [],
@@ -358,7 +358,7 @@ function renderConteudo() {
         })),
       ),
       caixa("Mostrar valor de cada item", orcamento.mostrarValores, (v) => { orcamento.mostrarValores = v; salvar(); },
-        "Desligado: o PDF mostra só o total de portas e de rodapés"),
+        "Preço unitário, quantidade e total de cada porta e rodapé. Desligado: só os totais por serviço"),
       campo("Formas de pagamento", h("input", {
         type: "text", value: orcamento.formasPagamento, maxlength: "200", autocomplete: "off",
         onInput: (e) => { orcamento.formasPagamento = e.target.value; salvar(); },

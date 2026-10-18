@@ -232,7 +232,7 @@ export function descreverPorta(porta, calculo, tabela) {
   const batente = tabela.batentes.precos.find((b) => String(b.largura) === String(porta.batente));
   if (batente) detalhes.push(`batente ${batente.largura} mm`);
   const guarnicao = tabela.guarnicoes.precos.find((g) => g.id === porta.guarnicao);
-  if (guarnicao) detalhes.push(`guarnição ${guarnicao.rotulo} ${Number(porta.lados) === 1 ? "em 1 lado" : "nos 2 lados"}`);
+  if (guarnicao) detalhes.push(`guarnição ${guarnicao.rotulo}`);
   if (abertura.fechadura) {
     const fechadura = tabela.fechaduras.find((f) => f.id === porta.fechadura);
     if (fechadura) detalhes.push(`fechadura ${fechadura.rotulo}`);
@@ -243,8 +243,10 @@ export function descreverPorta(porta, calculo, tabela) {
   }
   const kit = abertura.kit.filter((p) => !porta.kitDesmarcado.includes(p.id)).map((p) => p.rotulo.toLowerCase());
   if (kit.length) detalhes.push(`kit ${abertura.rotulo.toLowerCase()}: ${kit.join(", ")}`);
-  for (const s of tabela.servicos) if (porta.servicos.includes(s.id)) detalhes.push(s.rotulo.toLowerCase());
-  for (const a of tabela.acessorios) if (porta.acessorios.includes(a.id)) detalhes.push(a.rotulo.toLowerCase());
+  // Itens com "ocultarNoPdf" na tabela (etapas de fábrica, peças de instalação) entram no custo,
+  // mas não na descrição que o cliente lê.
+  for (const s of tabela.servicos) if (porta.servicos.includes(s.id) && !s.ocultarNoPdf) detalhes.push(s.rotulo.toLowerCase());
+  for (const a of tabela.acessorios) if (porta.acessorios.includes(a.id) && !a.ocultarNoPdf) detalhes.push(a.rotulo.toLowerCase());
 
   return { titulo, detalhes, quantidade: `${calculo.quantidade} un.` };
 }
