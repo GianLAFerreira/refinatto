@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<!-- A mesma política vai como cabeçalho HTTP no netlify.toml (que também cobre frame-ancestors). -->
+<meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'self'">
+<meta name="robots" content="noindex, nofollow">
+<meta name="referrer" content="no-referrer">
+<meta name="theme-color" content="#1b1512">
+<title>Gerador de orçamentos | Refinatto</title>
+<link rel="icon" href="../img/logo-monograma.jpg" type="image/jpeg">
+<link rel="stylesheet" href="gerador.css">
+</head>
+<body>
+
+<!-- Carregando: até /api/tabela responder se a sessão vale ou não -->
+<div class="g-carregando" id="telaCarregando" aria-live="polite">
+  <img src="../img/logo-monograma.jpg" alt="" class="g-carregando__marca">
+  <p>Carregando…</p>
+</div>
+
+<!-- LOGIN -->
+<main class="g-login" id="telaLogin" hidden>
+  <form class="g-login__cartao" id="formLogin" novalidate>
+    <img src="../img/logo-completo.jpg" alt="Refinatto" class="g-login__logo">
+    <h1>Gerador de orçamentos</h1>
+    <p class="g-login__sub">Área restrita</p>
+
+    <label class="g-campo">
+      <span>Usuário</span>
+      <input type="text" name="usuario" id="loginUsuario" autocomplete="username" autocapitalize="none" spellcheck="false" maxlength="200" required>
+    </label>
+    <label class="g-campo">
+      <span>Senha</span>
+      <span class="g-senha">
+        <input type="password" name="senha" id="loginSenha" autocomplete="current-password" maxlength="200" required>
+        <button type="button" class="g-senha__ver" id="verSenha" aria-label="Mostrar senha" aria-pressed="false">Ver</button>
+      </span>
+    </label>
+
+    <p class="g-erro" id="loginErro" role="alert" hidden></p>
+    <button type="submit" class="g-btn g-btn--primario g-btn--largo" id="btnEntrar">Entrar</button>
+  </form>
+</main>
+
+<!-- APP -->
+<div class="g-app" id="telaApp" hidden>
+  <header class="g-topo">
+    <img src="../img/logo-completo.jpg" alt="Refinatto" class="g-topo__logo">
+    <div class="g-topo__acoes">
+      <button type="button" class="g-chip g-chip--escuro" id="btnModoCliente" aria-pressed="false" title="Esconde custo e lucro para mostrar a tela ao cliente">Modo cliente</button>
+      <button type="button" class="g-chip g-chip--escuro" id="btnSair">Sair</button>
+    </div>
+  </header>
+
+  <main class="g-conteudo" id="conteudo"></main>
+
+  <footer class="g-barra" id="barraTotal"></footer>
+</div>
+
+<!-- PDF pronto -->
+<dialog class="g-dialogo" id="dialogoPdf">
+  <h2>PDF pronto</h2>
+  <p id="dialogoPdfNome"></p>
+  <div class="g-dialogo__acoes">
+    <button type="button" class="g-btn g-btn--primario g-btn--largo" id="btnCompartilhar" hidden>Compartilhar (WhatsApp…)</button>
+    <button type="button" class="g-btn g-btn--secundario g-btn--largo" id="btnBaixar">Baixar PDF</button>
+    <button type="button" class="g-btn g-btn--fantasma g-btn--largo" id="btnAbrirPdf">Visualizar</button>
+    <button type="button" class="g-link" id="btnFecharDialogo">Fechar</button>
+  </div>
+</dialog>
+
+<script src="vendor/jspdf-4.2.1.umd.min.js"></script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

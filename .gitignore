@@ -3,3 +3,9 @@ Thumbs.db
 .netlify/
 .vscode/
 .idea/
+
+# Gerador de orçamentos: segredos e tabela de preços em texto puro NUNCA vão pro git
+.env
+.env.*
+privado/
+node_modules/
