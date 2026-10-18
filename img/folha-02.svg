@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="180" viewBox="0 0 90 180">
+  <!-- Modelo "Frisada": 4 frisos horizontais em toda a largura da folha -->
+  <rect x="4" y="4" width="82" height="172" rx="3" fill="#f2ece0" stroke="#b68a3b" stroke-width="4"/>
+  <line x1="4" y1="40" x2="86" y2="40" stroke="#c9a562" stroke-width="2.5"/>
+  <line x1="4" y1="88" x2="86" y2="88" stroke="#c9a562" stroke-width="2.5"/>
+  <line x1="4" y1="136" x2="86" y2="136" stroke="#c9a562" stroke-width="2.5"/>
+  <circle cx="72" cy="92" r="3.5" fill="#b68a3b"/>
+</svg>

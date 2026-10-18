@@ -1,0 +1,770 @@
+:root {
+  /* Paleta — dourado sobre fundo escuro (a logo real do Maicon), tons claros mantendo a
+     mesma estrutura de antes (fundo base / fundo alternado / superfície de cartão). */
+  --noite: #1b1512;
+  --dourado: #b68a3b;
+  --dourado-claro: #d9b570;
+  --creme: #f2ece0;
+  --areia: #e8dcc8;
+  --carvao: #2a2521;
+  --branco: #ffffff;
+
+  /* Borda sutil em superfícies claras, derivada do dourado a baixa opacidade em vez de um
+     cinza-marrom arbitrário — mantém tudo na mesma família de cor. */
+  --linha: rgba(182, 138, 59, 0.35);
+  --dourado-suave: rgba(182, 138, 59, 0.12);
+
+  --whatsapp: #25d366;
+  --whatsapp-escuro: #1ebe57;
+  --sombra: 0 4px 16px rgba(0, 0, 0, 0.08);
+  --radius: 10px;
+}
+
+/* Fraunces e Public Sans, self-hosted (arquivos em fonts/), licença SIL Open Font License —
+   baixadas de fonts.gstatic.com, redistribuição livre. Cada uma é um único arquivo de fonte
+   variável cobrindo a faixa de peso usada no site (sem depender de internet nem do Google
+   em tempo de carregamento). */
+@font-face {
+  font-family: "Fraunces";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/fraunces-variable.woff2") format("woff2");
+}
+
+@font-face {
+  font-family: "Public Sans";
+  font-style: normal;
+  font-weight: 400 700;
+  font-display: swap;
+  src: url("../fonts/public-sans-variable.woff2") format("woff2");
+}
+
+* { box-sizing: border-box; }
+
+/* Garante que o atributo hidden sempre esconda o elemento, mesmo quando alguma classe do autor
+   (ex: .form__row com display:flex) empata em especificidade com a regra [hidden] do navegador. */
+[hidden] { display: none !important; }
+
+html { scroll-behavior: smooth; }
+
+@media (prefers-reduced-motion: no-preference) {
+  html { scroll-behavior: smooth; }
+}
+
+body {
+  margin: 0;
+  font-family: "Public Sans", "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  color: var(--carvao);
+  background: var(--creme);
+  line-height: 1.6;
+}
+
+h1, h2, h3, h4 {
+  margin: 0 0 0.6em;
+  color: var(--noite);
+  font-family: "Fraunces", Georgia, serif;
+  font-optical-sizing: auto;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+p { margin: 0 0 1em; }
+
+a { color: inherit; }
+
+:focus-visible {
+  outline: 2px solid var(--dourado);
+  outline-offset: 2px;
+}
+
+.container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 14px 28px;
+  border-radius: 999px;
+  font-weight: 600;
+  text-decoration: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1rem;
+  font-family: inherit;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.btn:hover { transform: translateY(-2px); box-shadow: var(--sombra); }
+
+.btn--primary {
+  background: var(--whatsapp);
+  color: #fff;
+}
+
+.btn--primary:hover { background: var(--whatsapp-escuro); }
+
+.btn--whatsapp { width: 100%; }
+
+.btn--ghost {
+  background: none;
+  border: 2px solid var(--dourado);
+  color: var(--noite);
+}
+
+.btn--ghost:hover {
+  background: var(--dourado);
+  color: var(--noite);
+}
+
+/* Header */
+.header {
+  position: sticky;
+  top: 0;
+  background: var(--noite);
+  box-shadow: var(--sombra);
+  z-index: 100;
+}
+
+.header__inner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+}
+
+.logo img {
+  height: 36px;
+  display: block;
+  /* A logo é exportada com fundo preto (JPEG, sem transparência) — "screen" soma luz sobre o
+     fundo escuro do header, então o preto desaparece e sobra só o traço dourado/branco. */
+  mix-blend-mode: screen;
+}
+
+.nav {
+  display: flex;
+  gap: 28px;
+}
+
+.nav a {
+  text-decoration: none;
+  font-weight: 600;
+  color: var(--creme);
+}
+
+.nav a:hover { color: var(--dourado-claro); }
+
+.nav-toggle {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 6px;
+}
+
+.nav-toggle span {
+  width: 26px;
+  height: 3px;
+  background: var(--creme);
+  border-radius: 2px;
+}
+
+/* Hero */
+.hero {
+  background: linear-gradient(160deg, var(--noite), #241c16);
+  color: var(--creme);
+  padding: 90px 0;
+  overflow: hidden;
+}
+
+.hero__inner {
+  display: flex;
+  align-items: center;
+  gap: 48px;
+  max-width: 1100px;
+}
+
+.hero__texto { max-width: 620px; }
+
+.hero h1 { color: #fff; font-size: 2.4rem; }
+
+.hero p { font-size: 1.15rem; color: var(--creme); }
+
+.hero__assinatura {
+  flex-shrink: 0;
+  width: 110px;
+  height: auto;
+  mix-blend-mode: screen;
+}
+
+.divisor svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .hero__assinatura {
+    /* revela a logo da esquerda pra direita ao carregar, como se estivesse sendo desenhada -
+       clip-path em vez de stroke-dasharray porque agora é uma foto real, não um traço vetorial */
+    clip-path: inset(0 100% 0 0);
+    animation: revelar-logo 1.1s cubic-bezier(0.65, 0, 0.35, 1) 0.4s forwards;
+  }
+
+  .hero__texto > * {
+    opacity: 0;
+    animation: surgir 0.7s ease-out forwards;
+  }
+
+  .hero__texto > *:nth-child(1) { animation-delay: 0.1s; }
+  .hero__texto > *:nth-child(2) { animation-delay: 0.25s; }
+  .hero__texto > *:nth-child(3) { animation-delay: 0.4s; }
+}
+
+@keyframes revelar-logo {
+  to { clip-path: inset(0 0 0 0); }
+}
+
+@keyframes surgir {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Revelação suave ao rolar a página - a classe .reveal é aplicada em index.html, e js/main.js
+   adiciona .is-visible via IntersectionObserver na primeira vez que o elemento entra na tela.
+   Fora do prefers-reduced-motion, o elemento fica visível o tempo todo (sem estado escondido). */
+@media (prefers-reduced-motion: no-preference) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.6s ease, transform 0.6s ease;
+  }
+
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .servicos__grid .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .servicos__grid .reveal:nth-child(3) { transition-delay: 0.2s; }
+
+  .galeria__categorias .reveal:nth-child(2) { transition-delay: 0.1s; }
+  .galeria__categorias .reveal:nth-child(3) { transition-delay: 0.2s; }
+}
+
+/* Divisor entre seções — o mesmo traço de porta do hero, em miniatura */
+.divisor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 300px;
+  margin: 0 auto;
+  padding: 40px 20px 0;
+  color: var(--dourado);
+}
+
+.divisor::before,
+.divisor::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--dourado);
+  opacity: 0.5;
+}
+
+.divisor svg { width: 16px; height: 26px; flex-shrink: 0; }
+
+/* Sobre */
+/* padding-top/bottom (não o atalho "padding") para não apagar o padding lateral de .container,
+   que é o que mantém o texto com respiro nas bordas em telas estreitas. */
+.sobre { padding-top: 70px; padding-bottom: 70px; max-width: 800px; }
+
+/* Serviços */
+.servicos {
+  background: var(--areia);
+  padding: 70px 0;
+}
+
+.servicos__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+  margin-top: 30px;
+}
+
+.card {
+  background: var(--branco);
+  border-radius: var(--radius);
+  padding: 28px;
+  box-shadow: var(--sombra);
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.card__icon svg {
+  width: 48px;
+  height: 48px;
+  fill: none;
+  stroke: var(--dourado);
+  stroke-width: 1.5;
+  margin-bottom: 16px;
+}
+
+/* Galeria — sem fotos reais ainda: mostra as categorias de trabalho em vez de fingir fotos */
+.galeria { padding: 70px 0; }
+
+.galeria__categorias {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+  margin-top: 30px;
+}
+
+.galeria__categoria {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--radius);
+  padding: 28px 24px;
+  text-align: center;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.galeria__categoria:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.12);
+}
+
+.galeria__categoria svg {
+  width: 40px;
+  height: 40px;
+  fill: none;
+  stroke: var(--dourado);
+  stroke-width: 1.5;
+  margin-bottom: 14px;
+}
+
+.galeria__categoria h3 { font-size: 1.1rem; margin-bottom: 6px; }
+
+.galeria__categoria p { margin: 0; font-size: 0.92rem; color: var(--carvao); }
+
+.galeria__cta {
+  margin-top: 32px;
+  text-align: center;
+  padding: 24px;
+  background: var(--dourado-suave);
+  border-radius: var(--radius);
+}
+
+.galeria__cta p { margin: 0 0 14px; }
+
+/* Orçamento */
+.orcamento {
+  background: var(--areia);
+  padding: 70px 0;
+}
+
+/* Título, texto e formulário ficam juntos numa coluna mais estreita e centralizada (mesma ideia da
+   seção "Sobre") em vez do formulário sozinho ficando grudado à esquerda do container largo. */
+.orcamento .container {
+  max-width: 640px;
+}
+
+.form {
+  max-width: 560px;
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.form__row { display: flex; flex-direction: column; gap: 6px; }
+
+.form__row label { font-weight: 600; color: var(--noite); }
+
+.form__row input,
+.form__row select,
+.form__row textarea {
+  padding: 12px 14px;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--branco);
+  color: var(--carvao);
+}
+
+.form__row input:focus,
+.form__row select:focus,
+.form__row textarea:focus {
+  outline: 2px solid var(--dourado);
+  outline-offset: 1px;
+}
+
+/* Footer */
+.footer {
+  background: var(--noite);
+  color: var(--creme);
+  padding: 50px 0 20px;
+}
+
+.footer__inner {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.footer h4 { color: #fff; }
+
+.footer a { color: var(--creme); text-decoration: underline; }
+
+.footer a:hover { color: var(--dourado-claro); }
+
+.footer__logo {
+  height: 30px;
+  margin-bottom: 10px;
+  mix-blend-mode: screen;
+}
+
+.footer__copy {
+  text-align: center;
+  margin: 30px 0 0;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+/* Botão flutuante do WhatsApp */
+.whatsapp-float {
+  position: fixed;
+  bottom: 22px;
+  right: 22px;
+  width: 58px;
+  height: 58px;
+  background: var(--whatsapp);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: var(--sombra);
+  z-index: 200;
+  transition: transform 0.15s ease;
+}
+
+.whatsapp-float:hover { transform: scale(1.08); }
+
+.whatsapp-float svg { width: 30px; height: 30px; fill: #fff; }
+
+/* Configurador de portas */
+.porta-config__chamada {
+  margin-bottom: 12px;
+  font-size: 0.95rem;
+}
+
+.porta-config__chamada span {
+  display: block;
+  color: var(--carvao);
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.wizard {
+  margin-top: 18px;
+  background: var(--branco);
+  border-radius: var(--radius);
+  box-shadow: var(--sombra);
+  padding: 24px;
+}
+
+/* Cada passo do wizard (porta ou rodapé) é um elemento novo no DOM a cada troca de innerHTML, então
+   a animação toca sozinha sem precisar de truque de reflow pra reiniciar. */
+@media (prefers-reduced-motion: no-preference) {
+  .wizard__passo { animation: wizard-surgir 0.25s ease; }
+}
+
+@keyframes wizard-surgir {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Confirmação visual no instante do clique, antes do avanço automático pra próxima pergunta -
+   .is-selecionando é só do JS (nunca vem no HTML já renderizado), diferente de .is-selected (que
+   também aparece ao revisitar uma etapa já respondida e não deve pulsar toda vez). */
+.wizard__opcao.is-selecionando,
+.wizard__card.is-selecionando {
+  border-color: var(--dourado);
+  background: var(--dourado-suave);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .wizard__opcao.is-selecionando,
+  .wizard__card.is-selecionando {
+    animation: wizard-opcao-pulso 0.2s ease;
+  }
+}
+
+@keyframes wizard-opcao-pulso {
+  50% { transform: scale(0.96); }
+}
+
+.wizard__topo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--dourado);
+  margin-bottom: 8px;
+}
+
+.wizard__barra {
+  flex: 1;
+  max-width: 200px;
+  height: 6px;
+  background: var(--areia);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.wizard__barra i {
+  display: block;
+  height: 100%;
+  background: var(--dourado);
+  transition: width 0.2s ease;
+}
+
+.wizard__pergunta {
+  margin-bottom: 4px;
+}
+
+.wizard__ajuda {
+  color: var(--carvao);
+  opacity: 0.75;
+  font-size: 0.9rem;
+  margin-bottom: 16px;
+}
+
+.wizard__opcoes {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.wizard__opcao {
+  padding: 12px 18px;
+  min-height: 44px;
+  border: 1px solid var(--linha);
+  border-radius: 999px;
+  background: var(--branco);
+  cursor: pointer;
+  font-size: 0.95rem;
+  font-family: inherit;
+  color: var(--carvao);
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.wizard__opcao:hover { border-color: var(--dourado); }
+
+.wizard__opcao.is-selected {
+  border-color: var(--dourado);
+  background: var(--dourado-suave);
+  font-weight: 600;
+}
+
+.wizard__cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.wizard__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 16px 12px;
+  min-height: 44px;
+  border: 1px solid var(--linha);
+  border-radius: var(--radius);
+  background: var(--branco);
+  cursor: pointer;
+  font-family: inherit;
+  text-align: center;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.wizard__card:hover { border-color: var(--dourado); }
+
+.wizard__card.is-selected {
+  border-color: var(--dourado);
+  background: var(--dourado-suave);
+}
+
+.wizard__card-img { width: 44px; height: 88px; }
+
+.wizard__amostra {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid var(--linha);
+}
+
+.wizard__card-rotulo { font-weight: 600; color: var(--noite); }
+
+.wizard__card-ajuda { font-size: 0.8rem; color: var(--carvao); opacity: 0.75; }
+
+.wizard__nota {
+  background: var(--areia);
+  border-radius: var(--radius);
+  padding: 16px;
+  margin-bottom: 16px;
+  color: var(--noite);
+}
+
+.wizard__campo-linha {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.wizard__campo {
+  flex: 1;
+  padding: 12px 14px;
+  border: 1px solid var(--linha);
+  border-radius: 8px;
+  font-size: 1rem;
+  font-family: inherit;
+  background: var(--branco);
+  color: var(--carvao);
+}
+
+.wizard__nav {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+}
+
+.wizard__link {
+  background: none;
+  border: none;
+  padding: 8px;
+  min-height: 44px;
+  color: var(--dourado);
+  text-decoration: underline;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-family: inherit;
+}
+
+.wizard__link--tudo {
+  display: block;
+  margin: 12px auto 0;
+}
+
+.porta-resumos { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+.porta-resumo,
+.rodape-resumo {
+  background: var(--branco);
+  border-radius: var(--radius);
+  border-left: 3px solid var(--dourado);
+  box-shadow: var(--sombra);
+  padding: 18px;
+}
+
+.rodape-resumos { margin-top: 18px; display: flex; flex-direction: column; gap: 14px; }
+
+.porta-resumo__topo {
+  display: flex;
+  justify-content: space-between;
+  color: var(--noite);
+  margin-bottom: 8px;
+}
+
+.porta-resumo__lista {
+  margin: 0 0 10px;
+  padding-left: 18px;
+  font-size: 0.9rem;
+}
+
+.porta-resumo__vazio {
+  font-size: 0.9rem;
+  color: var(--carvao);
+  opacity: 0.75;
+  margin: 0 0 10px;
+}
+
+.porta-resumo__acoes {
+  display: flex;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.porta-resumo__acoes .wizard__link { padding: 0; min-height: auto; }
+
+/* Responsivo */
+@media (max-width: 800px) {
+  .servicos__grid,
+  .galeria__categorias,
+  .footer__inner {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .hero__assinatura { width: 90px; }
+}
+
+@media (max-width: 640px) {
+  .nav {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--noite);
+    flex-direction: column;
+    padding: 16px 20px;
+    gap: 16px;
+    box-shadow: var(--sombra);
+    display: none;
+  }
+
+  .nav.is-open { display: flex; }
+
+  .nav-toggle { display: flex; }
+
+  .hero { padding: 60px 0; }
+
+  .hero__inner { flex-direction: column; gap: 24px; }
+
+  .hero h1 { font-size: 1.7rem; }
+
+  .hero__assinatura { width: 60px; }
+
+  .servicos__grid,
+  .galeria__categorias,
+  .footer__inner {
+    grid-template-columns: 1fr;
+  }
+
+  .wizard { padding: 18px; }
+
+  .wizard__nav { flex-direction: column-reverse; align-items: stretch; }
+
+  .wizard__nav > div { display: flex; justify-content: center; }
+
+  .wizard__campo-linha { flex-direction: column; }
+
+  .wizard__campo-linha .btn { width: 100%; }
+}

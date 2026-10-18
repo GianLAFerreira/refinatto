@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="90" height="180" viewBox="0 0 90 180">
+  <!-- Modelo "Moderna": frisos horizontais + uma linha decorativa curva na diagonal -->
+  <rect x="4" y="4" width="82" height="172" rx="3" fill="#f2ece0" stroke="#b68a3b" stroke-width="4"/>
+  <line x1="4" y1="55" x2="86" y2="55" stroke="#c9a562" stroke-width="2"/>
+  <line x1="4" y1="100" x2="86" y2="100" stroke="#c9a562" stroke-width="2"/>
+  <line x1="4" y1="145" x2="86" y2="145" stroke="#c9a562" stroke-width="2"/>
+  <path d="M25 12 C 40 45, 20 90, 38 130 C 46 150, 34 165, 40 172"
+        fill="none" stroke="#b68a3b" stroke-width="2" stroke-linecap="round"/>
+  <circle cx="72" cy="92" r="3.5" fill="#b68a3b"/>
+</svg>
