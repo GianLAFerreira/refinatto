@@ -25,6 +25,11 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
 - `js/porta-wizard.js` / `js/rodape-wizard.js` - configuradores passo a passo dentro do form de
   orçamento. Aparecem conforme o "Serviço desejado" escolhido. Expõem `window.PortaWizard` e
   `window.RodapeWizard` (`linhasResumo()`, `temPortas()/temRodapes()`, `reset()`), lidos pelo main.js.
+- `piso-laminado/`, `rodapes/`, `portas/` - páginas próprias de cada serviço (SEO). HTML estático
+  com caminhos absolutos (`/css/...`); header, rodapé e botão do WhatsApp são cópias dos da home,
+  então mudou lá, muda aqui também. Carregam só o `main.js` (que funciona sem o formulário). Os links
+  com `data-whatsapp="mensagem"` ganham o link do wa.me pelo main.js. "Montar orçamento pelo site"
+  aponta para `/?servico=Porta#orcamento`, que já deixa o serviço escolhido no formulário.
 - `img/` - logos, og-refinatto.jpg (preview do link no WhatsApp/redes, 1200x630) e SVGs esquemáticos das folhas de porta e estilos de rodapé.
 
 ## Pontos de atenção

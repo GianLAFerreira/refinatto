@@ -29,17 +29,33 @@ nav.querySelectorAll("a").forEach((link) => {
   });
 });
 
-// Botão flutuante e link do rodapé
-document.getElementById("floatingWhatsapp").href = montarLinkWhatsapp();
-document.getElementById("footerWhatsapp").href = montarLinkWhatsapp();
-document.getElementById("galeriaWhatsapp").href = montarLinkWhatsapp(
+// Links de WhatsApp: botão flutuante, rodapé e qualquer link com data-whatsapp (a mensagem vem do
+// próprio atributo; vazio = mensagem padrão). As páginas de serviço usam só o data-whatsapp.
+function ligarWhatsapp(elemento, mensagem) {
+  if (elemento) elemento.href = montarLinkWhatsapp(mensagem);
+}
+
+ligarWhatsapp(document.getElementById("floatingWhatsapp"));
+ligarWhatsapp(document.getElementById("footerWhatsapp"));
+ligarWhatsapp(
+  document.getElementById("galeriaWhatsapp"),
   "Olá! Vim pelo site da Refinatto e gostaria de ver fotos de trabalhos já realizados."
 );
+document.querySelectorAll("[data-whatsapp]").forEach((link) => ligarWhatsapp(link, link.dataset.whatsapp));
 
-// Formulário de orçamento -> WhatsApp
+// Formulário de orçamento -> WhatsApp (só existe na página inicial)
 const form = document.getElementById("orcamentoForm");
 
-form.addEventListener("submit", (evento) => {
+// Vindo de uma página de serviço (/?servico=Porta#orcamento), já deixa o serviço escolhido e
+// avisa os configuradores, que aparecem conforme o "change" do select
+const selectServico = document.getElementById("servico");
+const servicoDaUrl = new URLSearchParams(location.search).get("servico");
+if (selectServico && servicoDaUrl && [...selectServico.options].some((o) => o.value === servicoDaUrl)) {
+  selectServico.value = servicoDaUrl;
+  selectServico.dispatchEvent(new Event("change"));
+}
+
+form?.addEventListener("submit", (evento) => {
   evento.preventDefault();
 
   const nome = document.getElementById("nome").value.trim();
@@ -81,7 +97,8 @@ form.addEventListener("submit", (evento) => {
 });
 
 // Ano no rodapé
-document.getElementById("ano").textContent = new Date().getFullYear();
+const anoRodape = document.getElementById("ano");
+if (anoRodape) anoRodape.textContent = new Date().getFullYear();
 
 // Visualizador das fotos da galeria: sem JS o link abre a foto grande direto, com JS abre num
 // <dialog> por cima da página, com setas (botões, teclado e deslizar o dedo) e Esc para fechar

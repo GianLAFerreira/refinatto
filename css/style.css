@@ -765,6 +765,110 @@ a { color: inherit; }
 
 .porta-resumo__acoes .wizard__link { padding: 0; min-height: auto; }
 
+/* Páginas de serviço (/piso-laminado/, /rodapes/, /portas/) */
+.btn--contorno {
+  background: none;
+  border: 2px solid var(--dourado);
+  color: var(--creme);
+}
+
+.btn--contorno:hover { background: var(--dourado); color: var(--noite); }
+
+.servico-topo { padding: 50px 0 80px; }
+
+.trilha { margin-bottom: 28px; font-size: 0.9rem; color: var(--dourado-claro); }
+
+.trilha a { color: var(--creme); }
+
+.servico-topo__botoes { display: flex; flex-wrap: wrap; gap: 12px; }
+
+.servico-bloco { padding-top: 60px; padding-bottom: 20px; max-width: 900px; }
+
+.servico-cuidados {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.servico-cuidados li {
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-left: 4px solid var(--dourado);
+  border-radius: var(--radius);
+  padding: 20px 22px;
+}
+
+.servico-cuidados h3 { font-size: 1.05rem; margin-bottom: 6px; }
+
+.servico-cuidados p { margin: 0; font-size: 0.95rem; color: var(--carvao); }
+
+.servico-opcoes { display: flex; flex-wrap: wrap; gap: 20px; margin-top: 20px; }
+
+.servico-opcoes figure {
+  margin: 0;
+  padding: 18px 24px;
+  background: var(--branco);
+  border: 1px solid var(--linha);
+  border-radius: var(--radius);
+  text-align: center;
+}
+
+.servico-opcoes figcaption { margin-top: 8px; font-weight: 600; }
+
+.servico-chips { margin-top: 18px; }
+
+.servico-passos { margin: 24px 0 0; padding-left: 0; list-style: none; counter-reset: passo; }
+
+.servico-passos li {
+  counter-increment: passo;
+  position: relative;
+  padding: 0 0 18px 52px;
+  min-height: 36px;
+}
+
+.servico-passos li::before {
+  content: counter(passo);
+  position: absolute;
+  left: 0;
+  top: -4px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: var(--noite);
+  color: var(--dourado-claro);
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.servico-antes {
+  margin-top: 16px;
+  padding: 22px 24px;
+  background: var(--dourado-suave);
+  border-radius: var(--radius);
+}
+
+.servico-antes h3 { font-size: 1.05rem; margin-bottom: 8px; }
+
+.servico-antes ul { margin: 0; padding-left: 20px; }
+
+.servico-galeria { padding-top: 50px; padding-bottom: 20px; }
+
+.servicos--outros { margin-top: 60px; }
+
+.servicos__grid--2 { grid-template-columns: repeat(2, 1fr); max-width: 640px; }
+
+.servico-link { display: block; text-decoration: none; color: inherit; }
+
+.servico-link__mais,
+.card__mais { display: inline-block; margin-top: 10px; font-weight: 600; color: var(--dourado); }
+
+.servico-cta { padding-top: 70px; padding-bottom: 80px; max-width: 640px; text-align: center; }
+
 /* Responsivo */
 @media (max-width: 800px) {
   .servicos__grid,
@@ -816,9 +920,14 @@ a { color: inherit; }
   .hero h1 { font-size: 1.7rem; }
 
   .servicos__grid,
+  .servico-cuidados,
   .footer__inner {
     grid-template-columns: 1fr;
   }
+
+  .servicos__grid--2 { grid-template-columns: repeat(2, 1fr); }
+
+  .servico-topo__botoes .btn { width: 100%; text-align: center; }
 
   .wizard { padding: 18px; }
 
