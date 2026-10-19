@@ -83,6 +83,55 @@ form.addEventListener("submit", (evento) => {
 // Ano no rodapé
 document.getElementById("ano").textContent = new Date().getFullYear();
 
+// Visualizador das fotos da galeria: sem JS o link abre a foto grande direto, com JS abre num
+// <dialog> por cima da página, com setas (botões, teclado e deslizar o dedo) e Esc para fechar
+const visualizador = document.getElementById("visualizador");
+const visualizadorFoto = document.getElementById("visualizadorFoto");
+const linksGaleria = Array.from(document.querySelectorAll(".galeria__link"));
+let fotoAtualGaleria = 0;
+
+function mostrarFotoGaleria(indice) {
+  fotoAtualGaleria = (indice + linksGaleria.length) % linksGaleria.length;
+  const link = linksGaleria[fotoAtualGaleria];
+  visualizadorFoto.src = link.href;
+  visualizadorFoto.alt = link.querySelector("img").alt;
+}
+
+if (visualizador && typeof visualizador.showModal === "function") {
+  linksGaleria.forEach((link, indice) => {
+    link.addEventListener("click", (evento) => {
+      evento.preventDefault();
+      mostrarFotoGaleria(indice);
+      visualizador.showModal();
+    });
+  });
+
+  document.getElementById("visualizadorFechar").addEventListener("click", () => visualizador.close());
+  document.getElementById("visualizadorAnterior").addEventListener("click", () => mostrarFotoGaleria(fotoAtualGaleria - 1));
+  document.getElementById("visualizadorProxima").addEventListener("click", () => mostrarFotoGaleria(fotoAtualGaleria + 1));
+
+  // Clicar fora da foto (no fundo escuro) fecha
+  visualizador.addEventListener("click", (evento) => {
+    if (evento.target === visualizador) visualizador.close();
+  });
+
+  visualizador.addEventListener("keydown", (evento) => {
+    if (evento.key === "ArrowLeft") mostrarFotoGaleria(fotoAtualGaleria - 1);
+    if (evento.key === "ArrowRight") mostrarFotoGaleria(fotoAtualGaleria + 1);
+  });
+
+  let inicioToqueGaleria = null;
+  visualizador.addEventListener("touchstart", (evento) => {
+    inicioToqueGaleria = evento.touches[0].clientX;
+  }, { passive: true });
+  visualizador.addEventListener("touchend", (evento) => {
+    if (inicioToqueGaleria === null) return;
+    const distancia = evento.changedTouches[0].clientX - inicioToqueGaleria;
+    if (Math.abs(distancia) > 50) mostrarFotoGaleria(fotoAtualGaleria + (distancia < 0 ? 1 : -1));
+    inicioToqueGaleria = null;
+  });
+}
+
 // Revelação suave ao rolar a página (.reveal fica em index.html; a animação em si é CSS, só
 // entra em cena com prefers-reduced-motion:no-preference - ver css/style.css)
 const elementosReveal = document.querySelectorAll(".reveal");

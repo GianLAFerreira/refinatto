@@ -25,7 +25,7 @@ Deploy automático: a Netlify publica a raiz a cada push na `main` (config em `n
 - `js/porta-wizard.js` / `js/rodape-wizard.js` - configuradores passo a passo dentro do form de
   orçamento. Aparecem conforme o "Serviço desejado" escolhido. Expõem `window.PortaWizard` e
   `window.RodapeWizard` (`linhasResumo()`, `temPortas()/temRodapes()`, `reset()`), lidos pelo main.js.
-- `img/` - logos, og-image e SVGs esquemáticos das folhas de porta e estilos de rodapé.
+- `img/` - logos, og-refinatto.jpg (preview do link no WhatsApp/redes, 1200x630) e SVGs esquemáticos das folhas de porta e estilos de rodapé.
 
 ## Pontos de atenção
 
