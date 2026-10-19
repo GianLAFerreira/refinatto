@@ -285,6 +285,26 @@ a { color: inherit; }
    que é o que mantém o texto com respiro nas bordas em telas estreitas. */
 .sobre { padding-top: 70px; padding-bottom: 70px; max-width: 800px; }
 
+/* Onde atendemos */
+.cidades { padding-top: 70px; padding-bottom: 70px; max-width: 900px; }
+
+.cidades__lista {
+  list-style: none;
+  padding: 0;
+  margin: 24px 0 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.cidades__lista li {
+  border: 1px solid var(--linha);
+  background: var(--dourado-suave);
+  border-radius: 999px;
+  padding: 6px 14px;
+  font-size: 0.95rem;
+}
+
 /* Serviços */
 .servicos {
   background: var(--areia);
