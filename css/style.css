@@ -341,7 +341,7 @@ a { color: inherit; }
   margin-bottom: 16px;
 }
 
-/* Galeria — sem fotos reais ainda: mostra as categorias de trabalho em vez de fingir fotos */
+/* Galeria — categorias de trabalho e, abaixo, fotos reais dos serviços */
 .galeria { padding: 70px 0; }
 
 .galeria__categorias {
@@ -377,6 +377,28 @@ a { color: inherit; }
 .galeria__categoria h3 { font-size: 1.1rem; margin-bottom: 6px; }
 
 .galeria__categoria p { margin: 0; font-size: 0.92rem; color: var(--carvao); }
+
+.galeria__subtitulo { margin: 48px 0 0; text-align: center; font-size: 1.3rem; }
+
+.galeria__fotos {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0 0;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+}
+
+.galeria__fotos img {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 2 / 3;
+  object-fit: cover;
+  border-radius: var(--radius);
+  border: 1px solid var(--linha);
+  box-shadow: var(--sombra);
+}
 
 .galeria__cta {
   margin-top: 32px;
@@ -729,6 +751,7 @@ a { color: inherit; }
 @media (max-width: 800px) {
   .servicos__grid,
   .galeria__categorias,
+  .galeria__fotos,
   .footer__inner {
     grid-template-columns: repeat(2, 1fr);
   }
